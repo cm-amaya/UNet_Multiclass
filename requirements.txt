@@ -7,5 +7,5 @@ keras == 2.3.0
 matplotlib == 3.1.0
 numpy == 1.16.4
 opencv_python == 4.1.0.25
-tensorflow == 1.14.0
+tensorflow == 1.15.2
 utils == 0.9.0
