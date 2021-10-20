@@ -35,7 +35,7 @@ parser.add_argument('--batch_size', type=int,default=2, help='Batch size')
 parser.add_argument('--epochs', type=int,default=100, help='# of Epochs')
 args = parser.parse_args()
 
-# Directorios
+# Image Directories
 train_dir = args['train_dir']
 test_dir = args['val_dir']
 result_dir = args['result_dir']
@@ -97,7 +97,7 @@ metrics = [sm.metrics.IOUScore(threshold=0.5), sm.metrics.FScore(threshold=0.5)]
 model.compile(optim, total_loss, metrics)
 
 
-#Dataloaderss
+#Dataloaders
 train_dataloader = Dataloader(train_dataset, batch_size=BATCH_SIZE, shuffle=True)
 valid_dataloader = Dataloader(valid_dataset, batch_size=1, shuffle=False)
 
