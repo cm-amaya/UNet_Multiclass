@@ -20,20 +20,20 @@ class Dataset:
         self._load_samples()
 
     def _load_samples(self) -> None:
-        """Load image-label pairs."""
+        """Load image-mask pairs."""
         images_dir = self.root / "images"
-        labels_dir = self.root / "labels"
+        masks_dir = self.root / "masks"
 
         for idx, img_path in enumerate(sorted(images_dir.iterdir())):
             if not img_path.is_file():
                 continue
-            label_path = labels_dir / img_path.name
+            mask_path = masks_dir / img_path.name
 
-            if not label_path.is_file():
+            if not mask_path.is_file():
                 continue
 
             img = np.array(img_path, dtype=np.uint8)
-            label = np.array(label_path, dtype=np.uint8)
+            label = np.array(mask_path, dtype=np.uint8)
 
             if img.shape[:2] != (320, 320):
                 continue
@@ -68,7 +68,7 @@ class Dataloader:
     def __iter__(self) -> Iterator[Tuple[np.ndarray, np.ndarray]]:
         if self.shuffle:
             self._indices = self._indices[self._indices != -1][:]
-            self._indices.sort(random=self.shuffle)
+            random.shuffle(self._indices)
 
         for i in range(0, len(self.dataset), self.batch_size):
             batch = self.dataset[self._indices[i:i + self.batch_size]]

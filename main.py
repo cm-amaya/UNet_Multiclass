@@ -1,5 +1,4 @@
 import os
-os.environ['CUDA_VISIBLE_DEVICES'] = '0'
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 
 import argparse
@@ -67,8 +66,16 @@ def main() -> None:
     train_dataloader = Dataloader(train_dataset, batch_size=BATCH_SIZE, shuffle=True)
     valid_dataloader = Dataloader(valid_dataset, batch_size=1, shuffle=False)
 
-    assert train_dataloader[0][0].shape == (BATCH_SIZE, image_size, image_size, image_channels)
-    assert train_dataloader[0][1].shape == (BATCH_SIZE, image_size, image_size, n_classes)
+    if len(train_dataset) == 0:
+        raise ValueError(f"Training dataset is empty. Check {x_train_dir} and {y_train_dir}")
+    if len(valid_dataset) == 0:
+        raise ValueError(f"Validation dataset is empty. Check {x_valid_dir} and {y_valid_dir}")
+
+    batch = next(iter(train_dataloader))
+    assert batch[0].shape == (BATCH_SIZE, image_size, image_size, image_channels), \
+        f"Expected batch shape ({BATCH_SIZE}, {image_size}, {image_size}, {image_channels})"
+    assert batch[1].shape == (BATCH_SIZE, image_size, image_size, n_classes), \
+        f"Expected label shape ({BATCH_SIZE}, {image_size}, {image_size}, {n_classes})"
 
     callbacks = [
         keras.callbacks.ModelCheckpoint(
@@ -104,7 +111,6 @@ def main() -> None:
     plt.xlabel('Epoch')
     plt.legend(['Train', 'Test'], loc='upper left')
     plt.savefig(os.path.join(result_dir, 'UNET-Training.png'))
-    plt.show()
 
     model.save(os.path.join(result_dir, 'best_model'))
 

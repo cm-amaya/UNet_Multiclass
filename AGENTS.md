@@ -100,3 +100,16 @@ uv pip list
 This keeps context fresh for future agents working on the project.
 
 *Last updated: Nov 18, 2026*
+
+## 2026-11-18 - Ponytail audit & fixes
+
+- **Why:** Audit revealed 6 bugs/quirks: shuffle error, data path mismatch, blocking plot, empty dataset handling, CUDA hardcode.
+- **What:**
+  - Fixed `Dataloader.__iter__` shuffle argument (`random=self.shuffle` → `random.shuffle()`)
+  - Fixed dataset path (`labels/` → `masks/`) in `Dataset._load_samples()`
+  - Removed `plt.show()` from `main.py` (blocks on remote/headless)
+  - Added dataset emptiness check + proper batch shape assertions in `main.py`
+  - Pinned `albumentations>=2.0.0,<3.0.0` (2.x API changes)
+  - Removed hardcoded `CUDA_VISIBLE_DEVICES='0'` (allow env override)
+- **Files Changed:** `src/train/data_loader.py`, `main.py`, `pyproject.toml`, `AGENTS.md`
+- **Next:** Add test suite (pytest), fix validation dataloader batch shape
