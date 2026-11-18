@@ -64,7 +64,7 @@ def main() -> None:
     )
 
     train_dataloader = Dataloader(train_dataset, batch_size=BATCH_SIZE, shuffle=True)
-    valid_dataloader = Dataloader(valid_dataset, batch_size=1, shuffle=False)
+    valid_dataloader = Dataloader(valid_dataset, batch_size=BATCH_SIZE, shuffle=False)
 
     if len(train_dataset) == 0:
         raise ValueError(f"Training dataset is empty. Check {x_train_dir} and {y_train_dir}")
