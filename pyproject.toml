@@ -3,7 +3,7 @@ name = "unet-segmentation"
 version = "2.0.0"
 description = "UNet for Multiclass Semantic Segmentation"
 readme = "README.md"
-requires-python = ">=3.10"
+requires-python = ">=3.11"
 license = { text = "MIT" }
 authors = [{ name = "UNet Team" }]
 keywords = ["segmentation", "unet", "deep-learning", "tensorflow", "keras"]
@@ -17,12 +17,12 @@ classifiers = [
     "Programming Language :: Python :: 3.12",
 ]
 dependencies = [
-    "tensorflow>=2.16.0",
-    "keras>=3.0.0",
+    "tensorflow>=2.18.0",
+    "keras>=3.12.0",
     "albumentations>=2.0.0,<3.0.0",
     "numpy>=1.24.0",
-    "matplotlib>=3.7.0",
-    "pillow>=10.0.0",
+    "matplotlib==3.11.2",
+    "pillow>=13.0.0",
 ]
 
 [project.optional-dependencies]

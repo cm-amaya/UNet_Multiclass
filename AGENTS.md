@@ -115,3 +115,7 @@ This keeps context fresh for future agents working on the project.
 - **Next:** Add test suite (pytest), fix validation dataloader batch shape
 ## 2026-11-18 - Merge upgrade-libraries: package reorganization + CLI fixes
 ## 2026-11-18 - fix: shuffle, data path, plot, dataset checks, albumentations pin, CUDA env
+## 2026-11-18 - test: add minimal pytest suite for models, data_loader, augmentation
+## 2026-11-18 - test: add serialization, advanced, and integration tests
+## 2026-11-18 - fix: validation dataloader batch shape consistency
+## 2026-11-18 - sec: update dependencies (tensorflow 2.21.0, pillow 13.0.0, matplotlib 3.11.2, requires-python >=3.11)
