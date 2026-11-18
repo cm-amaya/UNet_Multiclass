@@ -114,3 +114,4 @@ This keeps context fresh for future agents working on the project.
 - **Files Changed:** `src/train/data_loader.py`, `main.py`, `pyproject.toml`, `AGENTS.md`
 - **Next:** Add test suite (pytest), fix validation dataloader batch shape
 ## 2026-11-18 - Merge upgrade-libraries: package reorganization + CLI fixes
+## 2026-11-18 - fix: shuffle, data path, plot, dataset checks, albumentations pin, CUDA env
