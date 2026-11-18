@@ -1,0 +1,13 @@
+{
+  "train_dir": "data/train",
+  "val_dir": "data/val",
+  "result_dir": "results",
+  "image_size": 320,
+  "image_channels": 3,
+  "padding_size": 800,
+  "n_classes": 2,
+  "batch_size": 8,
+  "epochs": 50,
+  "backbone": "resnet50",
+  "lr": 0.0001
+}

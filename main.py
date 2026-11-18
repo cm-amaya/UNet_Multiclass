@@ -1,8 +1,7 @@
-import os
-os.environ['CUDA_VISIBLE_DEVICES'] = '0'
-os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 
-import argparse
+
+import json
+from pathlib import Path
 import numpy as np
 import tensorflow as tf
 from tensorflow import keras
@@ -13,62 +12,66 @@ from train.data_loader import Dataset, Dataloader
 from train.utils import parse_args, ensure_dir
 
 
+def load_config(path: str | None = None) -> dict:
+    """Load optional config.json at repo root. Returns {} on any error (lenient)."""
+    if not path:
+        path = Path(__file__).parent / "config.json"
+    if not path.exists():
+        return {}
+    try:
+        with open(path, 'r', encoding='utf-8') as f:
+            return json.load(f)
+    except (OSError, json.JSONDecodeError):
+        return {}
+
+
 def main() -> None:
     """Entry point for UNet multiclass segmentation training."""
     # Parse args
     args = parse_args()
-    if not args.get('positional'):
-        parser = argparse.ArgumentParser(description='UNET for Multiclass Semantic Segmentation')
-        parser.add_argument('train_dir', help='Train dir - with subdirs images and masks')
-        parser.add_argument('val_dir', help='Val dir - with subdirs images and masks')
-        parser.add_argument('--result_dir', default="results", help='Result dir')
-        parser.add_argument('--image_size', type=int, default=320)
-        parser.add_argument('--image_channels', type=int, default=3)
-        parser.add_argument('--padding_size', type=int, default=800)
-        parser.add_argument('--n_classes', type=int, default=2)
-        parser.add_argument('--batch_size', type=int, default=2)
-        parser.add_argument('--epochs', type=int, default=100)
-        args = parser.parse_args()
+    positional = args.get('positional', [])
+
+    # Load config: positional[0] is custom config path
+    cfg = load_config(positional[0] if len(positional) > 0 else None)
+
+    # Apply config defaults, override with CLI args
+    train_dir = Path(cfg.get("train_dir", positional[1] if len(positional) > 1 else "data/train"))
+    val_dir = Path(cfg.get("val_dir", positional[2] if len(positional) > 2 else "data/val"))
+    result_dir = Path(cfg.get("result_dir", "results"))
+    image_size = cfg.get("image_size", 320)
+    image_channels = cfg.get("image_channels", 3)
+    padding_size = cfg.get("padding_size", 800)
+    n_classes = cfg.get("n_classes", 2)
+    batch_size = cfg.get("batch_size", 8)
+    epochs = cfg.get("epochs", 50)
+    backbone = cfg.get("backbone", "resnet50")
+    lr = cfg.get("lr", 0.0001)
 
     # Directories
-    train_dir, val_dir = args.train_dir, args.val_dir
-    result_dir = args.result_dir
+    x_train_dir = train_dir / "images"
+    y_train_dir = train_dir / "masks"
+    x_valid_dir = val_dir / "images"
+    y_valid_dir = val_dir / "masks"
     ensure_dir(result_dir)
-
-    x_train_dir = os.path.join(train_dir, 'images')
-    y_train_dir = os.path.join(train_dir, 'masks')
-    x_valid_dir = os.path.join(val_dir, 'images')
-    y_valid_dir = os.path.join(val_dir, 'masks')
-
-    # Parameters
-    BACKBONE = 'efficientnetb3'
-    BATCH_SIZE = args.batch_size
-    LR = 0.0001
-    EPOCHS = args.epochs
-    activation = 'softmax'
-    n_classes = args.n_classes
-    image_size = args.image_size
-    image_channels = args.image_channels
-    padding_size = args.padding_size
 
     # Datasets
     train_dataset = Dataset(x_train_dir, y_train_dir, classes=n_classes, augment=True)
     valid_dataset = Dataset(x_valid_dir, y_valid_dir, classes=n_classes, augment=False)
 
     # Model
-    model = create_unet(BACKBONE, classes=n_classes, activation=activation)
-    optim = keras.optimizers.Adam(LR)
+    model = create_unet(backbone, classes=n_classes, activation='softmax')
+    optim = keras.optimizers.Adam(lr)
     model.compile(
         optimizer=optim,
         loss=keras.losses.SparseCategoricalCrossentropy(from_logits=False),
         metrics=[keras.metrics.SparseCategoricalAccuracy()],
     )
 
-    train_dataloader = Dataloader(train_dataset, batch_size=BATCH_SIZE, shuffle=True)
-    valid_dataloader = Dataloader(valid_dataset, batch_size=1, shuffle=False)
+    train_dataloader = Dataloader(train_dataset, batch_size=batch_size, shuffle=True)
+    valid_dataloader = Dataloader(valid_dataset, batch_size=batch_size, shuffle=False)
 
-    assert train_dataloader[0][0].shape == (BATCH_SIZE, image_size, image_size, image_channels)
-    assert train_dataloader[0][1].shape == (BATCH_SIZE, image_size, image_size, n_classes)
+    assert train_dataloader[0][0].shape == (batch_size, image_size, image_size, image_channels)
+    assert train_dataloader[0][1].shape == (batch_size, image_size, image_size, n_classes)
 
     callbacks = [
         keras.callbacks.ModelCheckpoint(
@@ -82,7 +85,7 @@ def main() -> None:
 
     history = model.fit(
         train_dataloader,
-        epochs=EPOCHS,
+        epochs=epochs,
         callbacks=callbacks,
         validation_data=valid_dataloader,
     )
@@ -104,7 +107,6 @@ def main() -> None:
     plt.xlabel('Epoch')
     plt.legend(['Train', 'Test'], loc='upper left')
     plt.savefig(os.path.join(result_dir, 'UNET-Training.png'))
-    plt.show()
 
     model.save(os.path.join(result_dir, 'best_model'))
 
