@@ -1,5 +1,6 @@
 
 
+import os
 import json
 from pathlib import Path
 import numpy as np
@@ -8,6 +9,14 @@ from tensorflow import keras
 import matplotlib.pyplot as plt
 
 from unet_segmentation.models import create_unet
+
+def _setup_gpu_env():
+    """Auto-detect ROCm environment and set compatible GPU vars (AMD)."""
+    if "ROCM_HOME" in os.environ:
+        os.environ["CUDA_VISIBLE_DEVICES"] = os.environ.get("ROCM_VISIBLE_DEVICES", "0")
+
+
+_setup_gpu_env()
 from train.data_loader import Dataset, Dataloader
 from train.utils import parse_args, ensure_dir
 

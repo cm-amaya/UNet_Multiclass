@@ -4,7 +4,22 @@ UNet for Multiclass Semantic Segmentation, using Keras 3.x with TensorFlow 2.x
 
 ## Requirements
 
-You must have Python 3.10+ and an NVIDIA GPU with CUDA 11+ support (optional, for GPU acceleration).
+You must have Python 3.10+. GPU acceleration is optional.
+
+### NVIDIA GPU (CUDA)
+- CUDA 11+ recommended for full feature support
+- Set environment variable before running: `export CUDA_VISIBLE_DEVICES=0`
+
+### AMD GPU (ROCm) - Linux only
+- ROCm 6.4.x or newer, AMD drivers installed
+- TensorFlow 2.18.1+ with ROCm support
+- Community-maintained ROCm wheels; less stable than official CUDA builds
+- Set environment variable before running: `export HSA_OVERRIDE_GFX_VERSION=10.3.0` (adjust for your GPU)
+- Requires proper ROCm installation via AMD's official guides
+
+### CPU-only
+- Fully supported; no GPU drivers required
+- Slower training but no hardware dependencies
 
 ### Installation using uv (Recommended)
 

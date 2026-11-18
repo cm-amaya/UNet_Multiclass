@@ -69,7 +69,8 @@ def create_unet(backbone_name, classes, activation='softmax'):
 - Callbacks: ModelCheckpoint (best weights), ReduceLROnPlateau
 
 ## Known Limitations
-- No external CUDA verification in current setup
+- GPU autodetection: checks ROCM_HOME env var and sets CUDA_VISIBLE_DEVICES for ROCm compatibility
+- AMD ROCm support documented in README; limited to Linux with community wheels
 - Training plots use matplotlib (basic line charts)
 - Validation uses batch_size=1 for memory efficiency
 
@@ -100,3 +101,4 @@ uv pip list
 This keeps context fresh for future agents working on the project.
 
 *Last updated: Nov 18, 2026*
+## 2026-11-18 - Merge upgrade-libraries: package reorganization + CLI fixes

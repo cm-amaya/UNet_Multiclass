@@ -28,6 +28,7 @@ dependencies = [
 [project.optional-dependencies]
 dev = ["pytest", "black", "isort", "mypy"]
 gpu = ["opencv-python-headless"]
+rocm = ["tensorflow-rocm"]
 
 [project.scripts]
 train-unet = "main:main"
