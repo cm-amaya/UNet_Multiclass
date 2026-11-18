@@ -1,0 +1,56 @@
+[project]
+name = "unet-segmentation"
+version = "2.0.0"
+description = "UNet for Multiclass Semantic Segmentation"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [{ name = "UNet Team" }]
+keywords = ["segmentation", "unet", "deep-learning", "tensorflow", "keras"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+]
+dependencies = [
+    "tensorflow>=2.16.0",
+    "keras>=3.0.0",
+    "albumentations>=1.4.0",
+    "numpy>=1.24.0",
+    "matplotlib>=3.7.0",
+    "pillow>=10.0.0",
+]
+
+[project.optional-dependencies]
+dev = ["pytest", "black", "isort", "mypy"]
+gpu = ["opencv-python-headless"]
+
+[project.scripts]
+train-unet = "main:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/unet_segmentation", "src/train"]
+
+[tool.hatch.build.targets.sdist]
+include = ["src/", "README.md", "LICENSE", "MANIFEST.in"]
+
+[tool.black]
+line-length = 88
+target-version = ["py310", "py311", "py312"]
+
+[tool.isort]
+profile = "black"
+line_length = 88
+
+[tool.pyright]
+include = ["src/unet_segmentation", "src/train", "main.py"]
+exclude = ["**/__pycache__", "**/.venv"]
+typeCheckingMode = "basic"

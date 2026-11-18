@@ -1,0 +1,14 @@
+#!/bin/bash
+# Auto-update AGENTS.md after major changes
+# Triggers on: main.py, utils.py, pyproject.toml, AGENTS.md
+
+changed=$(git diff --name-only --cached 2>/dev/null || echo "")
+if echo "$changed" | grep -qE '^(main\.py|utils\.py|pyproject\.toml|AGENTS\.md)$'; then
+    timestamp=$(date '+%Y-%m-%d')
+    echo "## $timestamp - $(git log -1 --pretty=format:'%s' 2>/dev/null || echo 'Uncommitted changes')" >> AGENTS.md
+fi
+
+# Format code with black if available
+if command -v black &> /dev/null; then
+    black --check src/ main.py utils.py 2>/dev/null || black src/ main.py utils.py
+fi

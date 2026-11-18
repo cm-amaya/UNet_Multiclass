@@ -1,0 +1,5 @@
+{
+    "include": ["src/unet_segmentation", "main.py", "utils.py", "data_loader.py", "augmentation.py"],
+    "exclude": ["**/__pycache__", "**/.venv"],
+    "typeCheckingMode": "basic"
+}
