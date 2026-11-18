@@ -113,3 +113,4 @@ This keeps context fresh for future agents working on the project.
   - Removed hardcoded `CUDA_VISIBLE_DEVICES='0'` (allow env override)
 - **Files Changed:** `src/train/data_loader.py`, `main.py`, `pyproject.toml`, `AGENTS.md`
 - **Next:** Add test suite (pytest), fix validation dataloader batch shape
+## 2026-11-18 - Merge upgrade-libraries: package reorganization + CLI fixes
